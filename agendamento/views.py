@@ -228,7 +228,9 @@ def cancelar_agendamento(request, agendamento_id):
 @login_required
 def prestador_dashboard(request):
     pedidos = Agendamento.objects.all().order_by('data', 'horario')
+    meus_servicos = Servico.objects.filter(prestador=request.user)
 
-    return render(request, 'agendamento/prestador_dashboard.html', {
+    return render(request, 'prestador_dashboard.html', {
         'pedidos': pedidos,
+        'meus_servicos': meus_servicos,
     })

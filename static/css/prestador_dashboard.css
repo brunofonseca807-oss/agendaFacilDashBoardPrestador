@@ -270,3 +270,199 @@ body {
   border-radius: 50%;
   background: #0D9488;
 }
+
+/* ===== MEUS SERVIÇOS — tab switching ===== */
+
+/* Quando historico está em :target, oculta meus-servicos (irmão seguinte) */
+#historico-secao:target ~ #meus-servicos-secao {
+  display: none;
+}
+
+/* Quando meus-servicos está em :target, exibe-o */
+#meus-servicos-secao:target {
+  display: block;
+}
+
+/* Quando meus-servicos está em :target, oculta a-fazer (irmão seguinte) */
+#meus-servicos-secao:target ~ #a-fazer-secao {
+  display: none;
+}
+
+/* ===== MEUS SERVIÇOS — layout e componentes ===== */
+
+.ms-card-novo {
+  margin-bottom: 24px;
+}
+
+.ms-btn-novo {
+  width: 100%;
+  background: #6b7b4b;
+  color: #f5f1e8;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ms-btn-novo:hover {
+  background: #5a6a3a;
+}
+
+.ms-form {
+  margin-top: 16px;
+}
+
+.ms-oculto {
+  display: none;
+}
+
+.ms-campo {
+  margin-bottom: 12px;
+}
+
+.ms-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.ms-input {
+  width: 100%;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #111827;
+  background: #FFFFFF;
+  outline: none;
+  font-family: inherit;
+}
+
+.ms-input:focus {
+  border-color: #6b7b4b;
+  box-shadow: 0 0 0 3px rgba(107, 123, 75, 0.15);
+}
+
+.ms-linha-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ms-erros {
+  font-size: 13px;
+  color: #DC2626;
+  margin-bottom: 8px;
+}
+
+.ms-erros ul {
+  margin: 4px 0 0 0;
+  padding-left: 18px;
+}
+
+.ms-form-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.ms-btn-salvar {
+  flex: 1;
+  background: #6b7b4b;
+  color: #f5f1e8;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ms-btn-salvar:hover {
+  background: #5a6a3a;
+}
+
+.ms-btn-cancelar {
+  background: #FFFFFF;
+  color: #6B7280;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ms-btn-cancelar:hover {
+  border-color: #9CA3AF;
+  color: #374151;
+}
+
+.ms-card-servico {
+  position: relative;
+}
+
+.ms-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.ms-acoes {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.ms-btn-editar {
+  background: #f5f1e8;
+  color: #6b7b4b;
+  border: 1px solid #6b7b4b;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ms-btn-editar:hover {
+  background: #e8e3d4;
+}
+
+.ms-form-inline {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+
+.ms-btn-excluir {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ms-btn-excluir:hover {
+  background: #FEE2E2;
+  border-color: #F87171;
+}
+
+.ms-info-texto {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 16px;
+  line-height: 1.6;
+}

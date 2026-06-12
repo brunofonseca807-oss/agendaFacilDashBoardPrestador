@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import views_prestador
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -19,4 +20,8 @@ urlpatterns = [
     path('prestador/dashboard/', views.prestador_dashboard, name='prestador_dashboard'),
     path('cliente/pedido/<int:pedido_id>/acompanhar/', views.cliente_acompanhamento, name='cliente_acompanhamento'),
     path('reclame-aqui/', views.reclame_aqui, name='reclame_aqui'),
+
+    path('prestador/servicos/criar/', views_prestador.servico_criar, name='servico_criar'),
+    path('prestador/servicos/<int:servico_id>/editar/', views_prestador.servico_editar, name='servico_editar'),
+    path('prestador/servicos/<int:servico_id>/excluir/', views_prestador.servico_excluir, name='servico_excluir'),
 ]

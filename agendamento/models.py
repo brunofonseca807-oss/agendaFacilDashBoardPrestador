@@ -12,6 +12,13 @@ class Cliente(models.Model):
 
 
 class Servico(models.Model):
+    prestador = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='servicos',
+        null=True,
+        blank=True,
+    )
     nome = models.CharField(max_length=100)
     descricao = models.TextField()
     preco = models.DecimalField(max_digits=8, decimal_places=2)

@@ -19,11 +19,13 @@
   <p>Acompanhe e gerencie seus agendamentos</p>
 </div>
 
+<!-- ==================== HISTÓRICO ==================== -->
 <section id="historico-secao" class="aba-secao">
 
   <nav class="tabs">
     <a href="#a-fazer-secao" class="tab">A Fazer</a>
     <a href="#historico-secao" class="tab tab-ativa">Histórico</a>
+    <a href="#meus-servicos-secao" class="tab">Meus Serviços</a>
   </nav>
 
   <div class="page-columns">
@@ -81,11 +83,135 @@
 
 </section>
 
+<!-- ==================== MEUS SERVIÇOS ==================== -->
+<!-- Inserido ENTRE historico e a-fazer para que o seletor CSS
+     #meus-servicos-secao:target ~ #a-fazer-secao { display:none }
+     consiga ocultar a-fazer via irmão-seguinte (~). -->
+<section id="meus-servicos-secao" class="aba-secao">
+
+  <nav class="tabs">
+    <a href="#a-fazer-secao" class="tab">A Fazer</a>
+    <a href="#historico-secao" class="tab">Histórico</a>
+    <a href="#meus-servicos-secao" class="tab tab-ativa">Meus Serviços</a>
+  </nav>
+
+  <div class="page-columns">
+    <div class="col-left">
+
+      <!-- Card: novo serviço -->
+      <div class="card ms-card-novo">
+        <button type="button" class="ms-btn-novo" id="ms-btn-abrir" onclick="msToggleNovo()">+ Novo Serviço</button>
+        <form id="ms-form-novo" class="ms-form ms-oculto" onsubmit="msCriar(event)">
+          {% csrf_token %}
+          <div class="ms-campo">
+            <label class="ms-label">Nome do serviço</label>
+            <input type="text" name="nome" required maxlength="100" class="ms-input" placeholder="Ex: Instalação elétrica">
+          </div>
+          <div class="ms-campo">
+            <label class="ms-label">Descrição</label>
+            <textarea name="descricao" rows="3" class="ms-input" placeholder="Descreva o serviço..."></textarea>
+          </div>
+          <div class="ms-linha-2col">
+            <div class="ms-campo">
+              <label class="ms-label">Preço (R$)</label>
+              <input type="number" name="preco" step="0.01" min="0.01" required class="ms-input" placeholder="150.00">
+            </div>
+            <div class="ms-campo">
+              <label class="ms-label">Duração (min)</label>
+              <input type="number" name="duracao_estimada" min="15" max="480" required class="ms-input" placeholder="60">
+            </div>
+          </div>
+          <div class="ms-erros" id="ms-erros-novo"></div>
+          <div class="ms-form-acoes">
+            <button type="submit" class="ms-btn-salvar">Salvar serviço</button>
+            <button type="button" class="ms-btn-cancelar" onclick="msToggleNovo()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Lista de serviços existentes -->
+      <div id="ms-lista">
+        {% for servico in meus_servicos %}
+        <div class="card ms-card-servico" id="ms-card-{{ servico.id }}">
+
+          <!-- Exibição normal -->
+          <div class="ms-info" id="ms-info-{{ servico.id }}">
+            <p class="cliente-nome">{{ servico.nome }}</p>
+            <p class="servico-nome">{{ servico.descricao }}</p>
+            <div class="ms-badges">
+              <span class="status-badge">R$ {{ servico.preco }}</span>
+              <span class="data-horario">{{ servico.duracao_estimada }} min</span>
+            </div>
+            <div class="ms-acoes">
+              <button type="button" class="ms-btn-editar" onclick="msToggleEditar({{ servico.id }})">Editar</button>
+              <form class="ms-form-inline" id="ms-form-excluir-{{ servico.id }}" onsubmit="msExcluir(event, {{ servico.id }})">
+                {% csrf_token %}
+                <button type="submit" class="ms-btn-excluir">Excluir</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Formulário de edição inline (oculto por padrão) -->
+          <form id="ms-form-editar-{{ servico.id }}" class="ms-form ms-oculto" onsubmit="msEditar(event, {{ servico.id }})">
+            {% csrf_token %}
+            <div class="ms-campo">
+              <label class="ms-label">Nome do serviço</label>
+              <input type="text" name="nome" value="{{ servico.nome }}" required maxlength="100" class="ms-input">
+            </div>
+            <div class="ms-campo">
+              <label class="ms-label">Descrição</label>
+              <textarea name="descricao" rows="3" class="ms-input">{{ servico.descricao }}</textarea>
+            </div>
+            <div class="ms-linha-2col">
+              <div class="ms-campo">
+                <label class="ms-label">Preço (R$)</label>
+                <input type="number" name="preco" step="0.01" min="0.01" value="{{ servico.preco }}" required class="ms-input">
+              </div>
+              <div class="ms-campo">
+                <label class="ms-label">Duração (min)</label>
+                <input type="number" name="duracao_estimada" min="15" max="480" value="{{ servico.duracao_estimada }}" required class="ms-input">
+              </div>
+            </div>
+            <div class="ms-erros" id="ms-erros-editar-{{ servico.id }}"></div>
+            <div class="ms-form-acoes">
+              <button type="submit" class="ms-btn-salvar">Salvar alterações</button>
+              <button type="button" class="ms-btn-cancelar" onclick="msToggleEditar({{ servico.id }})">Cancelar</button>
+            </div>
+          </form>
+
+        </div>
+        {% empty %}
+        <div class="empty-state" id="ms-estado-vazio">
+          <p>Nenhum serviço cadastrado ainda</p>
+          <p>Clique em "+ Novo Serviço" para adicionar</p>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <div class="col-right">
+      <div class="card-detalhes">
+        <p class="card-titulo">Seus Serviços</p>
+        <hr class="divider">
+        <div class="detalhe-linha">
+          <span class="detalhe-label">Total cadastrado</span>
+          <span class="detalhe-valor" id="ms-total">{{ meus_servicos|length }}</span>
+        </div>
+        <p class="ms-info-texto">Gerencie os serviços que você oferece. Alterações refletem imediatamente no catálogo.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==================== A FAZER ==================== -->
 <section id="a-fazer-secao" class="aba-secao">
 
   <nav class="tabs">
     <a href="#a-fazer-secao" class="tab tab-ativa">A Fazer</a>
     <a href="#historico-secao" class="tab">Histórico</a>
+    <a href="#meus-servicos-secao" class="tab">Meus Serviços</a>
   </nav>
 
   <div class="page-columns">
@@ -143,6 +269,7 @@
 
 </section>
 
+<!-- ==================== CALENDÁRIO OPERACIONAL ==================== -->
 <div class="calendario-secao">
   <h3>Calendário Operacional</h3>
   <div class="calendario-grid">
@@ -171,6 +298,172 @@
     <div class="dia-celula">14</div>
   </div>
 </div>
+
+<!-- URLs injetadas como data-attributes para manter o bloco <script> livre de
+     template tags do Django (evita falsos positivos do linter JS do VS Code). -->
+<div id="ms-config" hidden
+     data-url-criar="{% url 'servico_criar' %}"
+     data-url-editar="{% url 'servico_editar' servico_id=0 %}"
+     data-url-excluir="{% url 'servico_excluir' servico_id=0 %}"></div>
+
+<!-- ==================== JAVASCRIPT: MEUS SERVIÇOS CRUD ==================== -->
+<script>
+  var _msCfg = document.getElementById('ms-config').dataset;
+  // O sufixo /0/ é substituído pelo ID real em tempo de execução.
+  var MS_URL_CRIAR   = _msCfg.urlCriar;
+  var MS_URL_EDITAR  = function(id) { return _msCfg.urlEditar.replace('/0/', '/' + id + '/'); };
+  var MS_URL_EXCLUIR = function(id) { return _msCfg.urlExcluir.replace('/0/', '/' + id + '/'); };
+
+  function msToggleNovo() {
+    const form = document.getElementById('ms-form-novo');
+    const btn  = document.getElementById('ms-btn-abrir');
+    const abrindo = form.classList.contains('ms-oculto');
+    form.classList.toggle('ms-oculto');
+    btn.textContent = abrindo ? '− Fechar' : '+ Novo Serviço';
+    if (!abrindo) document.getElementById('ms-erros-novo').innerHTML = '';
+  }
+
+  function msToggleEditar(id) {
+    const info = document.getElementById('ms-info-' + id);
+    const form = document.getElementById('ms-form-editar-' + id);
+    info.classList.toggle('ms-oculto');
+    form.classList.toggle('ms-oculto');
+    if (form.classList.contains('ms-oculto')) {
+      document.getElementById('ms-erros-editar-' + id).innerHTML = '';
+    }
+  }
+
+  function msCriar(event) {
+    event.preventDefault();
+    const form    = event.target;
+    const errosEl = document.getElementById('ms-erros-novo');
+    fetch(MS_URL_CRIAR, { method: 'POST', body: new FormData(form) })
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        if (resp.success) {
+          const vazio = document.getElementById('ms-estado-vazio');
+          if (vazio) vazio.remove();
+          document.getElementById('ms-lista').insertAdjacentHTML('afterbegin', msCardHtml(resp.servico));
+          form.reset();
+          msToggleNovo();
+          errosEl.innerHTML = '';
+          msAtualizarTotal(1);
+        } else {
+          errosEl.innerHTML = msErrosHtml(resp.errors);
+        }
+      })
+      .catch(function() { errosEl.innerHTML = '<p>Erro de conexão. Tente novamente.</p>'; });
+  }
+
+  function msEditar(event, id) {
+    event.preventDefault();
+    const form    = event.target;
+    const errosEl = document.getElementById('ms-erros-editar-' + id);
+    fetch(MS_URL_EDITAR(id), { method: 'POST', body: new FormData(form) })
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        if (resp.success) {
+          const s    = resp.servico;
+          const info = document.getElementById('ms-info-' + id);
+          info.querySelector('.cliente-nome').textContent = s.nome;
+          info.querySelector('.servico-nome').textContent = s.descricao;
+          const badges = info.querySelectorAll('.status-badge, .data-horario');
+          if (badges[0]) badges[0].textContent = 'R$ ' + s.preco;
+          if (badges[1]) badges[1].textContent = s.duracao_estimada + ' min';
+          msToggleEditar(id);
+          errosEl.innerHTML = '';
+        } else {
+          errosEl.innerHTML = msErrosHtml(resp.errors);
+        }
+      })
+      .catch(function() { errosEl.innerHTML = '<p>Erro de conexão. Tente novamente.</p>'; });
+  }
+
+  function msExcluir(event, id) {
+    event.preventDefault();
+    if (!confirm('Excluir este serviço? Esta ação não pode ser desfeita.')) return;
+    const form = event.target;
+    fetch(MS_URL_EXCLUIR(id), { method: 'POST', body: new FormData(form) })
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        if (resp.success) {
+          const card = document.getElementById('ms-card-' + id);
+          if (card) card.remove();
+          msAtualizarTotal(-1);
+          if (document.querySelectorAll('.ms-card-servico').length === 0) {
+            document.getElementById('ms-lista').innerHTML =
+              '<div class="empty-state" id="ms-estado-vazio">' +
+              '<p>Nenhum serviço cadastrado ainda</p>' +
+              '<p>Clique em "+ Novo Serviço" para adicionar</p></div>';
+          }
+        }
+      })
+      .catch(function() { alert('Erro ao excluir. Tente novamente.'); });
+  }
+
+  function msAtualizarTotal(delta) {
+    const el = document.getElementById('ms-total');
+    if (el) el.textContent = Math.max(0, parseInt(el.textContent || '0', 10) + delta);
+  }
+
+  function msErrosHtml(errors) {
+    const msgs = Object.values(errors).reduce(function(acc, arr) { return acc.concat(arr); }, []);
+    return '<ul>' + msgs.map(function(m) { return '<li>' + msEsc(String(m)) + '</li>'; }).join('') + '</ul>';
+  }
+
+  // Escapa conteúdo para inserção segura em HTML (evita XSS nos dados retornados pelo servidor)
+  function msEsc(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function msCsrfToken() {
+    const el = document.querySelector('[name=csrfmiddlewaretoken]');
+    return el ? el.value : '';
+  }
+
+  // Gera HTML de um card de serviço para inserção dinâmica após criação via AJAX
+  function msCardHtml(s) {
+    const csrf = msCsrfToken();
+    const urlEditar  = msEsc(MS_URL_EDITAR(s.id));
+    const urlExcluir = msEsc(MS_URL_EXCLUIR(s.id));
+    return '<div class="card ms-card-servico" id="ms-card-' + s.id + '">' +
+      '<div class="ms-info" id="ms-info-' + s.id + '">' +
+        '<p class="cliente-nome">' + msEsc(s.nome) + '</p>' +
+        '<p class="servico-nome">' + msEsc(s.descricao) + '</p>' +
+        '<div class="ms-badges">' +
+          '<span class="status-badge">R$ ' + msEsc(s.preco) + '</span>' +
+          '<span class="data-horario">' + msEsc(String(s.duracao_estimada)) + ' min</span>' +
+        '</div>' +
+        '<div class="ms-acoes">' +
+          '<button type="button" class="ms-btn-editar" onclick="msToggleEditar(' + s.id + ')">Editar</button>' +
+          '<form class="ms-form-inline" id="ms-form-excluir-' + s.id + '" onsubmit="msExcluir(event,' + s.id + ')">' +
+            '<input type="hidden" name="csrfmiddlewaretoken" value="' + msEsc(csrf) + '">' +
+            '<button type="submit" class="ms-btn-excluir">Excluir</button>' +
+          '</form>' +
+        '</div>' +
+      '</div>' +
+      '<form id="ms-form-editar-' + s.id + '" class="ms-form ms-oculto" onsubmit="msEditar(event,' + s.id + ')">' +
+        '<input type="hidden" name="csrfmiddlewaretoken" value="' + msEsc(csrf) + '">' +
+        '<div class="ms-campo"><label class="ms-label">Nome do serviço</label>' +
+          '<input type="text" name="nome" value="' + msEsc(s.nome) + '" required maxlength="100" class="ms-input"></div>' +
+        '<div class="ms-campo"><label class="ms-label">Descrição</label>' +
+          '<textarea name="descricao" rows="3" class="ms-input">' + msEsc(s.descricao) + '</textarea></div>' +
+        '<div class="ms-linha-2col">' +
+          '<div class="ms-campo"><label class="ms-label">Preço (R$)</label>' +
+            '<input type="number" name="preco" step="0.01" min="0.01" value="' + msEsc(s.preco) + '" required class="ms-input"></div>' +
+          '<div class="ms-campo"><label class="ms-label">Duração (min)</label>' +
+            '<input type="number" name="duracao_estimada" min="15" max="480" value="' + msEsc(String(s.duracao_estimada)) + '" required class="ms-input"></div>' +
+        '</div>' +
+        '<div class="ms-erros" id="ms-erros-editar-' + s.id + '"></div>' +
+        '<div class="ms-form-acoes">' +
+          '<button type="submit" class="ms-btn-salvar">Salvar alterações</button>' +
+          '<button type="button" class="ms-btn-cancelar" onclick="msToggleEditar(' + s.id + ')">Cancelar</button>' +
+        '</div>' +
+      '</form>' +
+    '</div>';
+  }
+</script>
 
 </body>
 </html>
