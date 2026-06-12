@@ -49,3 +49,23 @@ class Agendamento(models.Model):
 
     def __str__(self):
         return f"{self.cliente.nome} - {self.servico.nome} - {self.data} {self.horario}"
+
+
+class Reclamacao(models.Model):
+    NOTA_CHOICES = [
+        ('1', '1 estrela'),
+        ('2', '2 estrelas'),
+        ('3', '3 estrelas'),
+        ('4', '4 estrelas'),
+        ('5', '5 estrelas'),
+    ]
+
+    nome = models.CharField(max_length=100)
+    email = models.EmailField()
+    servico_contratado = models.CharField(max_length=200)
+    descricao = models.TextField()
+    nota = models.CharField(max_length=1, choices=NOTA_CHOICES)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nome} — {self.servico_contratado} ({self.nota}★)"

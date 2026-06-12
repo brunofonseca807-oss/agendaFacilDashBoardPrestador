@@ -96,6 +96,63 @@
 
         .rodape a { color: #c0392b; text-decoration: none; }
         .rodape a:hover { text-decoration: underline; }
+
+        /* ── Listagem de reclamações ── */
+        .secao-lista { margin-top: 48px; }
+
+        .secao-lista h2 {
+            font-size: 1.2rem;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card-reclamacao {
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            background: #fafafa;
+        }
+
+        .card-reclamacao .cabecalho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .card-reclamacao .nome-servico {
+            font-weight: 700;
+            color: #222;
+            font-size: 0.95rem;
+        }
+
+        .card-reclamacao .nota {
+            font-size: 0.9rem;
+            color: #c0392b;
+            font-weight: 600;
+        }
+
+        .card-reclamacao .autor {
+            font-size: 0.82rem;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .card-reclamacao .descricao-texto {
+            font-size: 0.9rem;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        .sem-reclamacoes {
+            color: #999;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px 0;
+        }
     </style>
 </head>
 
@@ -157,6 +214,26 @@
         <div class="rodape">
             <a href="/">Voltar para a página inicial</a>
         </div>
+
+        <!-- ── Listagem das reclamações do banco ── -->
+        <section class="secao-lista">
+            <h2>Reclamações recebidas ({{ reclamacoes|length }})</h2>
+
+            {% if reclamacoes %}
+                {% for reclamacao in reclamacoes %}
+                <div class="card-reclamacao">
+                    <div class="cabecalho">
+                        <span class="nome-servico">{{ reclamacao.servico_contratado }}</span>
+                        <span class="nota">{{ reclamacao.nota }}★</span>
+                    </div>
+                    <div class="autor">Por {{ reclamacao.nome }} • {{ reclamacao.criado_em|date:"d/m/Y H:i" }}</div>
+                    <div class="descricao-texto">{{ reclamacao.descricao }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="sem-reclamacoes">Nenhuma reclamação cadastrada ainda.</p>
+            {% endif %}
+        </section>
     </div>
 </body>
 </html>
