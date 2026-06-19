@@ -24,4 +24,6 @@ urlpatterns = [
     path('prestador/servicos/criar/', views_prestador.servico_criar, name='servico_criar'),
     path('prestador/servicos/<int:servico_id>/editar/', views_prestador.servico_editar, name='servico_editar'),
     path('prestador/servicos/<int:servico_id>/excluir/', views_prestador.servico_excluir, name='servico_excluir'),
+
+    path('prestador/customizacao/salvar/', views_prestador.customizacao_salvar, name='customizacao_salvar'),
 ]

@@ -3,13 +3,14 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import time
 
-from .models import Servico, Cliente, LocalAtendimento, Agendamento
+from .models import Servico, Cliente, LocalAtendimento, Agendamento, CustomizacaoHeader
 from .forms import AgendamentoForm, CadastroUsuarioForm, LoginUsuarioForm, ReclamacaoForm, EditarAgendamentoForm
 
 
 def home(request):
     servicos = Servico.objects.all()
-    return render(request, 'index.html', {'servicos': servicos})
+    customizacao = CustomizacaoHeader.get_solo()
+    return render(request, 'index.html', {'servicos': servicos, 'customizacao': customizacao})
 
 
 def login_view(request):
@@ -229,8 +230,10 @@ def cancelar_agendamento(request, agendamento_id):
 def prestador_dashboard(request):
     pedidos = Agendamento.objects.all().order_by('data', 'horario')
     meus_servicos = Servico.objects.filter(prestador=request.user)
+    customizacao = CustomizacaoHeader.get_solo()
 
     return render(request, 'prestador_dashboard.html', {
         'pedidos': pedidos,
         'meus_servicos': meus_servicos,
+        'customizacao': customizacao,
     })

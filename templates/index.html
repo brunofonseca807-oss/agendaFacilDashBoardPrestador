@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda Fácil</title>
 
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}?v=3">
 
     <link
         rel="stylesheet"
@@ -18,18 +18,28 @@
 
 <body>
 
-    <header>
-        <div class="botoes-usuario">
-            {% if user.is_authenticated %}
-                <a class="botao-login" href="/logout/">Sair</a>
-                <a class="botao-meus-pedidos" href="/meus-agendamentos/">Meus pedidos</a>
-            {% else %}
-                <a class="botao-login" href="/login/">Login</a>
+    <header style="background-color: {{ customizacao.cor_header }};">
+        <div class="header-row">
+            {% if customizacao.logo %}
+                <img src="{{ customizacao.logo.url }}" alt="Logo" class="header-logo header-logo-{{ customizacao.logo_posicao }}">
             {% endif %}
-        </div>
 
-        <h1>Agenda Fácil</h1>
-        <p>Agende serviços de forma simples, rápida e organizada.</p>
+            <div class="header-titulos">
+                {% if customizacao.exibir_titulo_subtitulo %}
+                    {% if customizacao.titulo %}<h1>{{ customizacao.titulo }}</h1>{% endif %}
+                    {% if customizacao.subtitulo %}<p>{{ customizacao.subtitulo }}</p>{% endif %}
+                {% endif %}
+            </div>
+
+            <div class="botoes-usuario">
+                {% if user.is_authenticated %}
+                    <a class="botao-login" href="/logout/">Sair</a>
+                    <a class="botao-meus-pedidos" href="/meus-agendamentos/">Meus pedidos</a>
+                {% else %}
+                    <a class="botao-login" href="/login/">Login</a>
+                {% endif %}
+            </div>
+        </div>
     </header>
 
     <main>

@@ -288,6 +288,16 @@ body {
   display: none;
 }
 
+/* ===== CUSTOMIZAÇÃO — tab switching ===== */
+
+#customizacao-secao:target {
+  display: block;
+}
+
+#customizacao-secao:target ~ #a-fazer-secao {
+  display: none;
+}
+
 /* ===== MEUS SERVIÇOS — layout e componentes ===== */
 
 .ms-card-novo {
@@ -465,4 +475,38 @@ body {
   color: #6B7280;
   margin-top: 16px;
   line-height: 1.6;
+}
+
+/* ===== CUSTOMIZAÇÃO — componentes do formulário ===== */
+
+.cz-checkbox-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cz-checkbox-label {
+  margin-bottom: 0;
+}
+
+.cz-color-input {
+  width: 60px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cz-logo-atual {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cz-logo-preview {
+  height: 50px;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
 }

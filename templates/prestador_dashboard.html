@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agenda Fácil – Painel do Prestador</title>
-  <link rel="stylesheet" href="{% static 'css/prestador_dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/prestador_dashboard.css' %}?v=2">
 </head>
 <body>
 
@@ -26,6 +26,7 @@
     <a href="#a-fazer-secao" class="tab">A Fazer</a>
     <a href="#historico-secao" class="tab tab-ativa">Histórico</a>
     <a href="#meus-servicos-secao" class="tab">Meus Serviços</a>
+    <a href="#customizacao-secao" class="tab">Customização</a>
   </nav>
 
   <div class="page-columns">
@@ -93,6 +94,7 @@
     <a href="#a-fazer-secao" class="tab">A Fazer</a>
     <a href="#historico-secao" class="tab">Histórico</a>
     <a href="#meus-servicos-secao" class="tab tab-ativa">Meus Serviços</a>
+    <a href="#customizacao-secao" class="tab">Customização</a>
   </nav>
 
   <div class="page-columns">
@@ -205,6 +207,81 @@
 
 </section>
 
+<!-- ==================== CUSTOMIZAÇÃO ==================== -->
+<!-- Inserido ENTRE meus-servicos e a-fazer pelo mesmo motivo do comentário acima:
+     #customizacao-secao:target ~ #a-fazer-secao { display:none } precisa que
+     customizacao venha antes de a-fazer no DOM. -->
+<section id="customizacao-secao" class="aba-secao">
+
+  <nav class="tabs">
+    <a href="#a-fazer-secao" class="tab">A Fazer</a>
+    <a href="#historico-secao" class="tab">Histórico</a>
+    <a href="#meus-servicos-secao" class="tab">Meus Serviços</a>
+    <a href="#customizacao-secao" class="tab tab-ativa">Customização</a>
+  </nav>
+
+  <div class="page-columns">
+    <div class="col-left">
+
+      <div class="card">
+        <form id="cz-form" class="ms-form" onsubmit="czSalvar(event)" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="ms-campo">
+            <label class="ms-label">Título (opcional)</label>
+            <input type="text" name="titulo" id="cz-titulo" value="{{ customizacao.titulo }}" maxlength="100" class="ms-input">
+          </div>
+          <div class="ms-campo">
+            <label class="ms-label">Subtítulo (opcional)</label>
+            <input type="text" name="subtitulo" id="cz-subtitulo" value="{{ customizacao.subtitulo }}" maxlength="255" class="ms-input">
+          </div>
+          <div class="ms-campo cz-checkbox-linha">
+            <input type="checkbox" name="exibir_titulo_subtitulo" id="cz-exibir" {% if customizacao.exibir_titulo_subtitulo %}checked{% endif %}>
+            <label for="cz-exibir" class="ms-label cz-checkbox-label">Exibir título e subtítulo no cabeçalho</label>
+          </div>
+          <div class="ms-campo">
+            <label class="ms-label">Cor do cabeçalho</label>
+            <input type="color" name="cor_header" id="cz-cor" value="{{ customizacao.cor_header }}" class="cz-color-input">
+          </div>
+          <div class="ms-campo">
+            <label class="ms-label">Logo (opcional)</label>
+            {% if customizacao.logo %}
+              <div class="cz-logo-atual">
+                <img src="{{ customizacao.logo.url }}" alt="Logo atual" id="cz-logo-preview" class="cz-logo-preview">
+                <label class="cz-checkbox-label">
+                  <input type="checkbox" name="remover_logo" id="cz-remover-logo" value="1"> Remover logo atual
+                </label>
+              </div>
+            {% endif %}
+            <input type="file" name="logo" id="cz-logo-input" accept="image/*" class="ms-input">
+          </div>
+          <div class="ms-campo cz-checkbox-linha">
+            <label class="ms-label cz-checkbox-label">
+              <input type="radio" name="logo_posicao" value="esquerda" {% if customizacao.logo_posicao == 'esquerda' %}checked{% endif %}> Logo à esquerda
+            </label>
+            <label class="ms-label cz-checkbox-label">
+              <input type="radio" name="logo_posicao" value="centro" {% if customizacao.logo_posicao == 'centro' %}checked{% endif %}> Logo ao centro
+            </label>
+          </div>
+          <div class="ms-erros" id="cz-erros"></div>
+          <div class="ms-form-acoes">
+            <button type="submit" class="ms-btn-salvar">Salvar customização</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="col-right">
+      <div class="card-detalhes">
+        <p class="card-titulo">Sobre a customização</p>
+        <hr class="divider">
+        <p class="ms-info-texto">Essas configurações controlam o cabeçalho exibido na página inicial (landing page). Alterações refletem imediatamente para todos os visitantes.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
 <!-- ==================== A FAZER ==================== -->
 <section id="a-fazer-secao" class="aba-secao">
 
@@ -212,6 +289,7 @@
     <a href="#a-fazer-secao" class="tab tab-ativa">A Fazer</a>
     <a href="#historico-secao" class="tab">Histórico</a>
     <a href="#meus-servicos-secao" class="tab">Meus Serviços</a>
+    <a href="#customizacao-secao" class="tab">Customização</a>
   </nav>
 
   <div class="page-columns">
@@ -305,6 +383,8 @@
      data-url-criar="{% url 'servico_criar' %}"
      data-url-editar="{% url 'servico_editar' servico_id=0 %}"
      data-url-excluir="{% url 'servico_excluir' servico_id=0 %}"></div>
+
+<div id="cz-config" hidden data-url-salvar="{% url 'customizacao_salvar' %}"></div>
 
 <!-- ==================== JAVASCRIPT: MEUS SERVIÇOS CRUD ==================== -->
 <script>
@@ -462,6 +542,37 @@
         '</div>' +
       '</form>' +
     '</div>';
+  }
+
+  // ==================== CUSTOMIZAÇÃO ====================
+  var CZ_URL_SALVAR = document.getElementById('cz-config').dataset.urlSalvar;
+
+  function czSalvar(event) {
+    event.preventDefault();
+    const form    = event.target;
+    const errosEl = document.getElementById('cz-erros');
+    fetch(CZ_URL_SALVAR, { method: 'POST', body: new FormData(form) })
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        if (resp.success) {
+          errosEl.innerHTML = '';
+          const c = resp.customizacao;
+          const preview = document.getElementById('cz-logo-preview');
+          if (c.logo_url) {
+            if (preview) {
+              preview.src = c.logo_url;
+            }
+          } else if (preview) {
+            preview.closest('.cz-logo-atual').remove();
+          }
+          const removerCheckbox = document.getElementById('cz-remover-logo');
+          if (removerCheckbox) removerCheckbox.checked = false;
+          document.getElementById('cz-logo-input').value = '';
+        } else {
+          errosEl.innerHTML = msErrosHtml(resp.errors);
+        }
+      })
+      .catch(function() { errosEl.innerHTML = '<p>Erro de conexão. Tente novamente.</p>'; });
   }
 </script>
 

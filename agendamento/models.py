@@ -58,6 +58,39 @@ class Agendamento(models.Model):
         return f"{self.cliente.nome} - {self.servico.nome} - {self.data} {self.horario}"
 
 
+class CustomizacaoHeader(models.Model):
+    LOGO_POSICAO_CHOICES = [
+        ('esquerda', 'Esquerda'),
+        ('centro', 'Centro'),
+    ]
+
+    titulo = models.CharField(max_length=100, default='Agenda Fácil', blank=True)
+    subtitulo = models.CharField(
+        max_length=255,
+        default='Agende serviços de forma simples, rápida e organizada.',
+        blank=True,
+    )
+    exibir_titulo_subtitulo = models.BooleanField(default=True)
+    cor_header = models.CharField(max_length=7, default='#6b7b4b')
+    logo = models.ImageField(upload_to='header_logos/', null=True, blank=True)
+    logo_posicao = models.CharField(max_length=10, choices=LOGO_POSICAO_CHOICES, default='esquerda')
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return 'Customização do Header'
+
+
 class Reclamacao(models.Model):
     NOTA_CHOICES = [
         ('1', '1 estrela'),
